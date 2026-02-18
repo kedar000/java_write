@@ -15,3 +15,58 @@ public class Main {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+public static void resetCell(Cell cell, Workbook workbook) {
+
+    if (cell == null) return;
+
+    /* ---------------- REMOVE COMMENT ---------------- */
+
+    Comment comment = cell.getCellComment();
+    if (comment != null) {
+        Sheet sheet = cell.getSheet();
+        Drawing<?> drawing = sheet.getDrawingPatriarch();
+
+        // Remove the visual comment box
+        if (drawing != null) {
+            drawing.removeShape(comment);
+        }
+
+        // Detach from the cell
+        cell.removeCellComment();
+    }
+
+    /* ---------------- RESET STYLE ---------------- */
+
+    // Create a clean style (Excel default look)
+    CellStyle defaultStyle = workbook.createCellStyle();
+
+    // No fill color
+    defaultStyle.setFillPattern(FillPatternType.NO_FILL);
+
+    // Default font
+    Font defaultFont = workbook.createFont();
+    defaultFont.setBold(false);
+    defaultFont.setColor(IndexedColors.BLACK.getIndex());
+    defaultFont.setFontHeightInPoints((short) 11); // Excel default
+
+    defaultStyle.setFont(defaultFont);
+
+    // Remove borders
+    defaultStyle.setBorderTop(BorderStyle.NONE);
+    defaultStyle.setBorderBottom(BorderStyle.NONE);
+    defaultStyle.setBorderLeft(BorderStyle.NONE);
+    defaultStyle.setBorderRight(BorderStyle.NONE);
+
+    // Apply
+    cell.setCellStyle(defaultStyle);
+}
