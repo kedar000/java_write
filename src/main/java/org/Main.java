@@ -70,3 +70,43 @@ public static void resetCell(Cell cell, Workbook workbook) {
     // Apply
     cell.setCellStyle(defaultStyle);
 }
+
+
+
+
+
+
+
+
+public void addComment(Cell cell, Sheet sheet, Workbook workbook, String message) {
+
+    System.out.println("Hover comment called");
+
+    /* ---------- REMOVE OLD COMMENT ---------- */
+    Comment oldComment = cell.getCellComment();
+    if (oldComment != null) {
+        cell.removeCellComment();
+    }
+
+    /* ---------- REUSE DRAWING LAYER ---------- */
+    Drawing<?> drawing = sheet.getDrawingPatriarch();
+    if (drawing == null) {
+        drawing = sheet.createDrawingPatriarch();
+    }
+
+    CreationHelper helper = workbook.getCreationHelper();
+
+    /* ---------- COMMENT POSITION ---------- */
+    ClientAnchor anchor = helper.createClientAnchor();
+    anchor.setCol1(cell.getColumnIndex());
+    anchor.setCol2(cell.getColumnIndex() + 2);
+    anchor.setRow1(cell.getRowIndex());
+    anchor.setRow2(cell.getRowIndex() + 3);
+
+    /* ---------- CREATE COMMENT ---------- */
+    Comment comment = drawing.createCellComment(anchor);
+    comment.setString(helper.createRichTextString(message));
+
+    /* ---------- ATTACH TO CELL ---------- */
+    cell.setCellComment(comment);
+}
